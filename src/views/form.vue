@@ -163,6 +163,7 @@
               height="400"
               border
               style="width: 100%;margin-top:10px"
+			  :span-method="objectSpanMethod"
 			  @selection-change="handleSelectionChange"> 
 			<!-- 选中列表中数据的函数 -->
 				<el-table-column
@@ -172,7 +173,7 @@
 					>
 				</el-table-column>
 				<!-- 订单详细信息 -->
-			    <el-table-column label="订单详情" type="expand" width="80" fixed> 
+			    <el-table-column label="订单详情" type="expand" width="80" fixed > 
 					<template slot-scope="props">
 						<el-form label-position="left" inline class="demo-table-expand">
 						<el-form-item label="物料单号">
@@ -223,6 +224,7 @@
                 prop="site"
                 label="清单所属网点">
               </el-table-column>
+			<el-table-column label="订单开票信息">  
               <el-table-column
                 prop="kaiNum"
                 label="开票类型">
@@ -235,6 +237,8 @@
                 prop="remark"
                 label="备注">
               </el-table-column>
+			</el-table-column>
+
               <el-table-column
                 prop="adder"
                 label="添加人">
@@ -242,7 +246,7 @@
               <el-table-column
                 fixed="right"
                 label="操作"
-                width="120"
+                width="130px"
 				>
                 <template slot-scope="scope">
                   <el-button
@@ -262,7 +266,7 @@
             </el-table>
 			<el-pagination
 				:current-page.sync="currentPage"
-				:page-sizes="[5, 10, 20]"
+				:page-sizes="[10, 20, 30]"
 				:page-size="pageSize"
 				:total="finalTotal"
 				@size-change="handleSizeChange"
@@ -283,12 +287,13 @@ import "../style/form.less"
 export default {
 	data() {
 		return {  
+			randomNum:"00000",//每两单生成的5位随机的物料单号
 			findFormList:[],//查询出的结果
 			sumData:[], //物料清单汇总的数据
 			dialogSum:false, //物料清单汇总弹框显示与否
 			multipleSelection:[],//清单物料汇总一开始为一个空数组
 			currentPage:1, //当前页数
-			pageSize: 5, //初始时一页的条数
+			pageSize: 10, //初始时一页的条数
 			changeData:-1, //当前表单中第几个数据在进行编辑
 			value6: "", //清单生成日期值
 			siteValue: "", //查询的清单所属网点的值
@@ -459,6 +464,8 @@ export default {
 			formLabelWidth: "120px", //添加部分弹框宽度
 			formList:[{  //表格显示部分表格的数据
 				num:"12345",date:["2017-12-26","2017-12-27"], site:"保定", kaiNum:"增值税专票",dingNum:58,sale:"用户自主汇款", remark:"已开票",adder:"han",getType:"支票",dingStatus:"其他"
+			},{  
+				num:"12345",date:["2017-12-22","2017-12-23"], site:"廊坊", kaiNum:"增值税普票",dingNum:58,sale:"用户自主汇款", remark:"已开票",adder:"han",getType:"支票",dingStatus:"其他"
 			}]
 
 		}
@@ -476,6 +483,22 @@ export default {
 		}
 	},
 	methods: {
+		//单元格合并
+		objectSpanMethod({ rowIndex, columnIndex }) {
+			if (columnIndex === 2 ) {
+				if (rowIndex % 2 === 0) {
+					return {
+						rowspan: 2,
+						colspan: 1
+					}
+				} else {
+					return {
+						rowspan: 0,
+						colspan: 0
+					}
+				}
+			}
+		},
 		handleSizeChange(pageSize){ //pageSize改变时即每页条目数改变时会触发，把这个数传到data的自己定义的pageSize中便于分页判断
 			this.pageSize = pageSize
 		},
@@ -495,27 +518,33 @@ export default {
 
 		establish1(){ //生成清单即在表格中添加数据
 			this.dialogFormVisible = false
-			if(this.form.siteValue==""|| this.form.dateValue=="" ||this.form.kaiType==""||this.form.getType==""||this.form.sale==""||this.form.dingStatus==""){
-				this.$alert("请填写完整您的数据再生成清单，谢谢！", "温馨提示", {
-					confirmButtonText: "确定"                           
-				})
+			// if(this.form.siteValue==""|| this.form.dateValue=="" ||this.form.kaiType==""||this.form.getType==""||this.form.sale==""||this.form.dingStatus==""){
+			// 	this.$alert("请填写完整您的数据再生成清单，谢谢！", "温馨提示", {
+			// 		confirmButtonText: "确定"                           
+			// 	})
+			// }else{
+			let obj={}
+				//每两单生成的物料单号相同
+			if(this.formList.length%2==0){
+				//生成5位随机清单编号
+				obj.num=parseInt(10*Math.random())+""+parseInt(10*Math.random())+""+parseInt(10*Math.random())+""+parseInt(10*Math.random())+""+parseInt(10*Math.random())
+				this.randomNum=obj.num
 			}else{
-				let obj={}
-                //生成5位随机清单编号
-				obj.num=parseInt(10*Math.random())+""+parseInt(10*Math.random())+""+parseInt(10*Math.random())+""+parseInt(10*Math.random())+""+parseInt(10*Math.random())          
-				obj.date=this.form.dateValue
-				obj.site=this.form.siteValue    
-				obj.kaiNum=this.form.kaiType
-				obj.dingNum=parseInt(101*Math.random())
-				obj.sale=this.form.sale
-				obj.remark=this.addIndex
-				obj.adder="han"
-				obj.getType=this.form.getType
-				obj.dingStatus=this.form.dingStatus
+				obj.num=this.randomNum
+			}         
+			obj.date=this.form.dateValue
+			obj.site=this.form.siteValue    
+			obj.kaiNum=this.form.kaiType
+			obj.dingNum=parseInt(101*Math.random())
+			obj.sale=this.form.sale
+			obj.remark=this.addIndex
+			obj.adder="han"
+			obj.getType=this.form.getType
+			obj.dingStatus=this.form.dingStatus
 			// console.log(obj.num+" "+obj.date[0]+" "+obj.site+" "+obj.kaiNum+" "+obj.dingNum+" "+obj.remark)
-				this.formList.push(obj)
-				this.form.siteValue= this.form.dateValue=this.form.kaiType=this.form.getType=this.form.sale=this.form.dingStatus=""
-			}
+			this.formList.push(obj)
+			this.form.siteValue= this.form.dateValue=this.form.kaiType=this.form.getType=this.form.sale=this.form.dingStatus=""
+			// }
 		},
 		deleteRow(index, rows) { //表格中选中数据删除
 			rows.splice(index, 1)
@@ -602,20 +631,20 @@ export default {
 					}
 				})
 				this.findFormList=this.findFormList.filter(function(arr){ //匹配日期
-					// console.log(_this.value6[0].split('-'))
-					//先计算出搜索的时间上下两个范围的总天数是多少
-					let rangeSmall=parseInt(_this.value6[0].split('-')[0]*365)+parseInt(_this.value6[0].split('-')[1]*30)+parseInt(_this.value6[0].split('-')[2]);
-					let rangeBig=parseInt(_this.value6[1].split('-')[0]*365)+parseInt(_this.value6[1].split('-')[1]*30)+parseInt(_this.value6[1].split('-')[2]);
-					// console.log(rangeSmall)
-					// console.log(rangeBig)
-					//再计算列表中生成时间的总天数并去判断是否在上面的区间中
-					let date=parseInt(arr.date[0].split('-')[0]*365)+parseInt(arr.date[0].split('-')[1]*30)+parseInt(arr.date[0].split('-')[2])
-					// console.log(date)
 					if(_this.value6){
+						// console.log(_this.value6[0].split('-'))
+						//先计算出搜索的时间上下两个范围的总天数是多少
+						let rangeSmall=parseInt(_this.value6[0].split("-")[0]*365)+parseInt(_this.value6[0].split("-")[1]*30)+parseInt(_this.value6[0].split("-")[2])
+						let rangeBig=parseInt(_this.value6[1].split("-")[0]*365)+parseInt(_this.value6[1].split("-")[1]*30)+parseInt(_this.value6[1].split("-")[2])
+						// console.log(rangeSmall)
+						// console.log(rangeBig)
+						//再计算列表中生成时间的总天数并去判断是否在上面的区间中
+						let date=parseInt(arr.date[0].split("-")[0]*365)+parseInt(arr.date[0].split("-")[1]*30)+parseInt(arr.date[0].split("-")[2])
+						// console.log(date)
 						if(date>=rangeSmall&&date<=rangeBig){
-							return true;
+							return true
 						}else{
-							return false;
+							return false
 						}
 					}else{
 						return true
@@ -632,22 +661,7 @@ export default {
 					})
 				}
 			}			
-		},
-		objectSpanMethod({ row, column, rowIndex, columnIndex }) {
-        if (columnIndex === 0) {
-          if (rowIndex % 2 === 0) {
-            return {
-              rowspan: 2,
-              colspan: 1
-            };
-          } else {
-            return {
-              rowspan: 0,
-              colspan: 0
-            };
-          }
-        }
-      }
+		}
 
 
 	}
