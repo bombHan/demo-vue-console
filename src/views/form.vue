@@ -484,20 +484,39 @@ export default {
 	},
 	methods: {
 		//单元格合并
-		objectSpanMethod({ rowIndex, columnIndex }) {
-			if (columnIndex === 2 ) {
-				if (rowIndex % 2 === 0) {
-					return {
-						rowspan: 2,
-						colspan: 1
-					}
-				} else {
-					return {
-						rowspan: 0,
-						colspan: 0
+		objectSpanMethod({row, rowIndex, columnIndex }) {			
+			if(columnIndex === 2){
+				if(rowIndex<this.pageList.length-1){
+					if(row.num===this.pageList[rowIndex+1].num){
+						return{
+							rowspan: 2,
+							colspan: 1
+						}
 					}
 				}
+				if(rowIndex>0){
+					if(this.pageList[rowIndex-1].num==row.num){
+						return{
+							rowspan: 0,
+							colspan: 0
+						}
+					}
+				}	
+						
 			}
+			// if (columnIndex === 2 ) {
+			// 	if (rowIndex % 2 === 0) {
+			// 		return {
+			// 			rowspan: 2,
+			// 			colspan: 1
+			// 		}
+			// 	} else {
+			// 		return {
+			// 			rowspan: 0,
+			// 			colspan: 0
+			// 		}
+			// 	}
+			// }
 		},
 		handleSizeChange(pageSize){ //pageSize改变时即每页条目数改变时会触发，把这个数传到data的自己定义的pageSize中便于分页判断
 			this.pageSize = pageSize
@@ -524,14 +543,20 @@ export default {
 			// 	})
 			// }else{
 			let obj={}
-				//每两单生成的物料单号相同
-			if(this.formList.length%2==0){
+			//只要新生产的清单上两条清单清单号相同则生产一条新的订单号否则生产一个跟上一个清单号相同的清单号
+			if(this.formList.length<2){ 
 				//生成5位随机清单编号
 				obj.num=parseInt(10*Math.random())+""+parseInt(10*Math.random())+""+parseInt(10*Math.random())+""+parseInt(10*Math.random())+""+parseInt(10*Math.random())
 				this.randomNum=obj.num
 			}else{
-				obj.num=this.randomNum
-			}         
+				if(this.formList[this.formList.length-1].num==this.formList[this.formList.length-2].num){
+					//生成5位随机清单编号
+					obj.num=parseInt(10*Math.random())+""+parseInt(10*Math.random())+""+parseInt(10*Math.random())+""+parseInt(10*Math.random())+""+parseInt(10*Math.random())
+					this.randomNum=obj.num
+				}else{
+					obj.num=this.randomNum
+				}  
+			}		       
 			obj.date=this.form.dateValue
 			obj.site=this.form.siteValue    
 			obj.kaiNum=this.form.kaiType
