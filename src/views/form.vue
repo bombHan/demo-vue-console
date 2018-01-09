@@ -237,12 +237,11 @@
                 prop="remark"
                 label="备注">
               </el-table-column>
-			</el-table-column>
-
               <el-table-column
                 prop="adder"
                 label="添加人">
               </el-table-column>
+			  </el-table-column>
               <el-table-column
                 fixed="right"
                 label="操作"
@@ -263,6 +262,7 @@
                   </el-button>
                 </template>
               </el-table-column>
+			  
             </el-table>
 			<el-pagination
 				:current-page.sync="currentPage"

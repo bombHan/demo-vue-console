@@ -64,7 +64,7 @@ module.exports = function(options){
                         loader: "file-loader",
                         options: {
                             name: options.dev ? "assets/[name].[ext]": "assets/[name]-[hash:8].[ext]",
-                            publicPath: options.dev ? "/": publicPath
+                            publicPath: options.dev ? "/": '../'
                         }
                     }]
                 },
