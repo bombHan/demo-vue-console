@@ -13,7 +13,7 @@
     "axios": "^0.17.0",
     "echarts": "^3.7.2",
     "element-ui": "^2.0.2",
-    "element-ui-plugin": "0.0.2",
+    "element-ui-plugin": "^2.0.6",
     "querystring": "^0.1.0",
     "vue": "^2.3.3",
     "vue-resource": "^1.3.3",
