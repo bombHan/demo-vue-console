@@ -504,19 +504,6 @@ export default {
 				}	
 						
 			}
-			// if (columnIndex === 2 ) {
-			// 	if (rowIndex % 2 === 0) {
-			// 		return {
-			// 			rowspan: 2,
-			// 			colspan: 1
-			// 		}
-			// 	} else {
-			// 		return {
-			// 			rowspan: 0,
-			// 			colspan: 0
-			// 		}
-			// 	}
-			// }
 		},
 		handleSizeChange(pageSize){ //pageSize改变时即每页条目数改变时会触发，把这个数传到data的自己定义的pageSize中便于分页判断
 			this.pageSize = pageSize
@@ -656,23 +643,26 @@ export default {
 					}
 				})
 				this.findFormList=this.findFormList.filter(function(arr){ //匹配日期
-					if(_this.value6){
-						// console.log(_this.value6[0].split('-'))
-						//先计算出搜索的时间上下两个范围的总天数是多少
-						let rangeSmall=parseInt(_this.value6[0].split("-")[0]*365)+parseInt(_this.value6[0].split("-")[1]*30)+parseInt(_this.value6[0].split("-")[2])
-						let rangeBig=parseInt(_this.value6[1].split("-")[0]*365)+parseInt(_this.value6[1].split("-")[1]*30)+parseInt(_this.value6[1].split("-")[2])
-						// console.log(rangeSmall)
-						// console.log(rangeBig)
-						//再计算列表中生成时间的总天数并去判断是否在上面的区间中
-						let date=parseInt(arr.date[0].split("-")[0]*365)+parseInt(arr.date[0].split("-")[1]*30)+parseInt(arr.date[0].split("-")[2])
-						// console.log(date)
-						if(date>=rangeSmall&&date<=rangeBig){
-							return true
+				// console.log(arr.date[0])
+					if(arr.date[0]){
+						if(_this.value6){
+							// console.log(_this.value6[0].split('-'))
+							//先计算出搜索的时间上下两个范围的总天数是多少
+							let rangeSmall=parseInt(_this.value6[0].split("-")[0]*365)+parseInt(_this.value6[0].split("-")[1]*30)+parseInt(_this.value6[0].split("-")[2])
+							let rangeBig=parseInt(_this.value6[1].split("-")[0]*365)+parseInt(_this.value6[1].split("-")[1]*30)+parseInt(_this.value6[1].split("-")[2])
+							// console.log(rangeSmall)
+							// console.log(rangeBig)
+							//再计算列表中生成时间的总天数并去判断是否在上面的区间中
+							let date=parseInt(arr.date[0].split("-")[0]*365)+parseInt(arr.date[0].split("-")[1]*30)+parseInt(arr.date[0].split("-")[2])
+							// console.log(date)
+							if(date>=rangeSmall&&date<=rangeBig){
+								return true
+							}else{
+								return false
+							}
 						}else{
-							return false
+							return true
 						}
-					}else{
-						return true
 					}
 				})
 				
